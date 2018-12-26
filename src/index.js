@@ -4,13 +4,13 @@
 
 const pathToRegexp = require('path-to-regexp');
 
-const singletonInstances = {};
+const instances = {};
 
 const defaultOpts = {
     mixins: {},
     strict: false,
     caseSensitive: false,
-    singletonKey: null
+    instanceKey: null
 };
 
 function isOfType(item, type) {
@@ -54,15 +54,15 @@ async function resolveWithHandler(execResult, handler, context = {}, opts = { pa
 
 class IsoRoute {
     constructor(opts = {}) {
-        if (opts.singletonKey && singletonInstances[singletonKey])
-            return singletonInstances[opts.singletonKey];
+        if (opts.instanceKey && instances[instanceKey])
+            return instances[opts.instanceKey];
 
         this.opts = Object.assign({}, defaultOpts, opts);
 
         this._handlersByRegex = {};
 
-        if (opts.singletonKey)
-            singletonInstances[opts.singletonKey] = this;
+        if (opts.instanceKey)
+            instances[opts.instanceKey] = this;
 
         return this;
     }
