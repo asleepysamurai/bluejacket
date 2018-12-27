@@ -2,6 +2,18 @@
 # yarn lockfile v1
 
 
+andlog@^1.0.0:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/andlog/-/andlog-1.0.1.tgz#afc6512b6e809f5bba63c6646d8685ccead19f11"
+  integrity sha512-x2KIOZkC0yaRDQRx3bAkMfuclgZjYF7O+n7gyxdJ7zpR+XaWh+Zz9fIYl/r00ymolx0YO67SH5fzxJqTEjy4VA==
+
+bows@^1.7.0:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/bows/-/bows-1.7.0.tgz#a3598ed9cef61a7a0cab1a7240f291654865ec76"
+  integrity sha1-o1mO2c72GnoMqxpyQPKRZUhl7HY=
+  dependencies:
+    andlog "^1.0.0"
+
 path-to-regexp@^2.4.0:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/path-to-regexp/-/path-to-regexp-2.4.0.tgz#35ce7f333d5616f1c1e1bfe266c3aba2e5b2e704"

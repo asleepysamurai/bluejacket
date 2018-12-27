@@ -9,5 +9,8 @@
   "private": false,
   "dependencies": {
     "path-to-regexp": "^2.4.0"
+  },
+  "devDependencies": {
+    "bows": "^1.7.0"
   }
 }

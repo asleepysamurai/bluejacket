@@ -19,7 +19,7 @@ function isOfType(item, type) {
 
 function recursivelyTypeCheckHandlers(handlerList) {
     handlerList.forEach(handler => {
-        if (isOfType(handler, 'Function'))
+        if (isOfType(handler, 'Function') || isOfType(handler, 'AsyncFunction'))
             return;
         if (isOfType(handler, 'Array'))
             return recursivelyTypeCheckHandlers(handler);
@@ -41,10 +41,10 @@ function buildParams(execResult, paramsList = []) {
 async function resolveWithHandler(execResult, handler, context = {}, opts = { params: null }) {
     context.params = opts.params || buildParams(execResult, handler.params);
 
-    if (isOfType(handler.action, 'Function')) {
-        return await Promise.resolve(handler.action(context));
+    if (isOfType(handler.action, 'Function') || isOfType(handler.action, 'AsyncFunction')) {
+        await Promise.resolve(handler.action(context));
     } else if (isOfType(handler.action, 'Array')) {
-        return await Promise.all(handler.action.map(action => {
+        return Promise.all(handler.action.map(action => {
             return resolveWithHandler(execResult, { action }, context, { params: context.params });
         }));
     } else {
@@ -54,7 +54,7 @@ async function resolveWithHandler(execResult, handler, context = {}, opts = { pa
 
 class IsoRoute {
     constructor(opts = {}) {
-        if (opts.instanceKey && instances[instanceKey])
+        if (opts.instanceKey && instances[opts.instanceKey])
             return instances[opts.instanceKey];
 
         this.opts = Object.assign({}, defaultOpts, opts);
@@ -70,7 +70,7 @@ class IsoRoute {
     handle(path, ...handlerList) {
         // If path is neither string nor regex, assume it's a handler
         // And set path to regex matching all
-        if (isOfType(path, 'String') || isOfType(path, 'RegExp')) {
+        if (!(isOfType(path, 'String') || isOfType(path, 'RegExp'))) {
             handlerList.unshift(path);
             path = /.*/;
         }
@@ -95,21 +95,26 @@ class IsoRoute {
         });
     }
 
-    async resolve(path, data) {
+    async resolve(path, data = {}) {
         let context = Object.assign({}, this.opts.mixins, {
             route: path,
             data
         });
 
-        for (let key in this._handlersByRegex) {
-            const handlerConfig = this._handlersByRegex[key];
+        try {
+            for (let key in this._handlersByRegex) {
+                const handlerConfig = this._handlersByRegex[key];
 
-            const execResult = handlerConfig.regex.exec(path);
-            if (execResult) {
-                for (let handler of handlerConfig.handlers) {
-                    await resolveWithHandler(execResult, handler, context);
+                const execResult = handlerConfig.regex.exec(path);
+                if (execResult) {
+                    for (let handler of handlerConfig.handlers) {
+                        await resolveWithHandler(execResult, handler, context);
+                    }
                 }
             }
+        } catch (err) {
+            if (err !== 'route')
+                throw err;
         }
     }
 };
