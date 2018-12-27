@@ -11,6 +11,8 @@
     "path-to-regexp": "^2.4.0"
   },
   "devDependencies": {
-    "bows": "^1.7.0"
+    "bows": "^1.7.0",
+    "express": "^4.16.4",
+    "node-fetch": "^2.3.0"
   }
 }

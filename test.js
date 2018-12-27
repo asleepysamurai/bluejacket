@@ -4,6 +4,8 @@
 
 const assert = require('assert');
 const logger = require('bows');
+const express = require('express');
+const fetch = require('node-fetch');
 
 const IsoRoute = require('./');
 
@@ -404,6 +406,44 @@ async function sequence(log) {
     await instance.resolve('/test');
 };
 
+async function expressResolve(log) {
+    const app = express();
+    const instance = new IsoRoute();
+
+    instance.handle('/test', (context) => {
+        log('/test');
+        context.routes = context.routes || [];
+        context.routes.push(context.route);
+
+        assert.strictEqual(context.routes[0], context.route);
+    });
+
+    instance.handle((context) => {
+        log('none');
+        context.routes = context.routes || [];
+        context.routes.push(context.route);
+
+        assert.strictEqual(context.routes[1], context.route);
+    });
+
+    instance.handle('/test', (context) => {
+        log('/test');
+        context.routes = context.routes || [];
+        context.routes.push(context.route);
+
+        assert.strictEqual(context.routes[2], context.route);
+    });
+
+    app.use(async (req, res, next) => {
+        await instance.resolve(req);
+    });
+
+    const port = 5000;
+    app.listen(port, async () => {
+        await fetch(`http://localhost:${port}/test`);
+    });
+};
+
 const tests = [
     instances.bind(null, logger('instances')),
     opts.bind(null, logger('opts')),
@@ -421,7 +461,8 @@ const tests = [
     params.bind(null, logger('params')),
     data.bind(null, logger('data')),
     noPath.bind(null, logger('noPath')),
-    sequence.bind(null, logger('sequence'))
+    sequence.bind(null, logger('sequence')),
+    expressResolve.bind(null, logger('expressResolve'))
 ];
 
 async function runTests(log) {
