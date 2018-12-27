@@ -435,7 +435,7 @@ async function expressResolve(log) {
     });
 
     app.use(async (req, res, next) => {
-        await instance.resolve(req);
+        await instance.resolve(req.originalUrl, Object.assign({}, req.query, req.body));
     });
 
     const port = 5000;
