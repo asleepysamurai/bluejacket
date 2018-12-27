@@ -119,6 +119,8 @@ class IsoRoute {
             if (err !== 'route')
                 throw err;
         }
+
+        return context;
     }
 };
 

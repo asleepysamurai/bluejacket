@@ -91,11 +91,10 @@ async function successRouteMultipleSeries(log) {
     }, (context) => {
         log(handlerMessages[2]);
         context.executedHandlers.push(handlerMessages[2]);
-
-        assert.deepStrictEqual(context.executedHandlers, handlerMessages);
     });
 
-    await instance.resolve('/test');
+    const context = await instance.resolve('/test');
+    assert.deepStrictEqual(context.executedHandlers, handlerMessages);
 };
 
 async function errorRouteMultipleSeries(log) {
@@ -140,10 +139,10 @@ async function successRouteMultipleParallel(log) {
         context.executedHandlers.push(handlerMessages[2]);
     }], (context) => {
         log('series');
-        assert.deepStrictEqual(context.executedHandlers.slice().sort(), handlerMessages);
     });
 
-    await instance.resolve('/test');
+    const context = await instance.resolve('/test');
+    assert.deepStrictEqual(context.executedHandlers.slice().sort(), handlerMessages);
 };
 
 async function errorRouteMultipleParallel(log) {
@@ -216,11 +215,10 @@ async function successRouteMultipleSeriesAsync(log) {
     }, (context) => {
         log(handlerMessages[2]);
         context.executedHandlers.push(handlerMessages[2]);
-
-        assert.deepStrictEqual(context.executedHandlers, handlerMessages);
     });
 
-    await instance.resolve('/test');
+    const context = await instance.resolve('/test');
+    assert.deepStrictEqual(context.executedHandlers, handlerMessages);
 };
 
 async function errorRouteMultipleSeriesAsync(log) {
@@ -269,11 +267,10 @@ async function successRouteMultipleParallelAsync(log) {
     }, (context) => {
         log(handlerMessages[1]);
         context.executedHandlers.push(handlerMessages[1]);
-    }], (context) => {
-        assert.deepStrictEqual(context.executedHandlers, handlerMessages);
-    });
+    }]);
 
-    await instance.resolve('/test');
+    const context = await instance.resolve('/test');
+    assert.deepStrictEqual(context.executedHandlers, handlerMessages);
 };
 
 async function errorRouteMultipleParallelAsync(log) {
