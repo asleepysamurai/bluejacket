@@ -1,9 +1,9 @@
 {
-  "name": "isoroute",
+  "name": "isorouter",
   "version": "0.0.1",
   "description": "Simple ExpressJS Style Router for Isomorphic Apps",
   "main": "./router.js",
-  "repository": "git@github.com:asleepysamurai/isoroute.git",
+  "repository": "git@github.com:asleepysamurai/isorouter.git",
   "author": "Balaganesh Damodaran <asleepysamurai@gmail.com>",
   "license": "MIT",
   "private": false,
