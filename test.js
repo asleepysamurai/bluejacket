@@ -436,12 +436,33 @@ async function expressResolve(log) {
 
     app.use(async (req, res, next) => {
         await instance.resolve(req.originalUrl, Object.assign({}, req.query, req.body));
+        res.end();
     });
 
     const port = 5000;
-    app.listen(port, async () => {
+    app.server = app.listen(port, async () => {
         await fetch(`http://localhost:${port}/test`);
+        app.server.close();
     });
+};
+
+async function preserveMixins(log) {
+    const mixins = {
+        a: 1,
+        b: 2
+    };
+
+    const instance = new IsoRoute({
+        mixins
+    });
+
+    instance.handle('/test', (context) => {
+        log('/test');
+
+        Object.keys(mixins).forEach(key => assert.deepStrictEqual(context[key], mixins[key]));
+    });
+
+    await instance.resolve('/test');
 };
 
 const tests = [
@@ -462,7 +483,8 @@ const tests = [
     data.bind(null, logger('data')),
     noPath.bind(null, logger('noPath')),
     sequence.bind(null, logger('sequence')),
-    expressResolve.bind(null, logger('expressResolve'))
+    expressResolve.bind(null, logger('expressResolve')),
+    preserveMixins.bind(null, logger('preserveMixins'))
 ];
 
 async function runTests(log) {
