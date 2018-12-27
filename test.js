@@ -374,6 +374,36 @@ async function noPath(log) {
     await instance.resolve('/test');
 };
 
+async function sequence(log) {
+    const instance = new IsoRoute();
+
+    instance.handle('/test', (context) => {
+        log('/test');
+        context.routes = context.routes || [];
+        context.routes.push(context.route);
+
+        assert.strictEqual(context.routes[0], context.route);
+    });
+
+    instance.handle((context) => {
+        log('none');
+        context.routes = context.routes || [];
+        context.routes.push(context.route);
+
+        assert.strictEqual(context.routes[1], context.route);
+    });
+
+    instance.handle('/test', (context) => {
+        log('/test');
+        context.routes = context.routes || [];
+        context.routes.push(context.route);
+
+        assert.strictEqual(context.routes[2], context.route);
+    });
+
+    await instance.resolve('/test');
+};
+
 const tests = [
     instances.bind(null, logger('instances')),
     opts.bind(null, logger('opts')),
@@ -390,7 +420,8 @@ const tests = [
     errorRouteMultipleParallelAsync.bind(null, logger('errorRouteMultipleParallelAsync')),
     params.bind(null, logger('params')),
     data.bind(null, logger('data')),
-    noPath.bind(null, logger('noPath'))
+    noPath.bind(null, logger('noPath')),
+    sequence.bind(null, logger('sequence'))
 ];
 
 async function runTests(log) {
