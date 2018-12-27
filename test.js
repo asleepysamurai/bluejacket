@@ -5,7 +5,7 @@
 const assert = require('assert');
 const logger = require('bows');
 
-const IsoRoute = require('../');
+const IsoRoute = require('./');
 
 function sleep(ms, success = true) {
     return new Promise((resolve, reject) => {
@@ -337,6 +337,43 @@ async function params(log) {
     await instance.resolve('/test/p2/p3');
 };
 
+async function data(log) {
+    const instance = new IsoRoute();
+    const data = { hasData: true };
+
+    instance.handle((context) => {
+        log('data');
+        context.routes = context.routes || [];
+        context.routes.push(context.route);
+
+        assert.deepStrictEqual(context.data, data);
+    });
+
+    await instance.resolve('/test', data);
+};
+
+async function noPath(log) {
+    const instance = new IsoRoute();
+
+    instance.handle((context) => {
+        log('all routes 1');
+        context.routes = context.routes || [];
+        context.routes.push(context.route);
+
+        assert.strictEqual(context.routes.length, 1);
+    });
+
+    instance.handle((context) => {
+        log('all routes 2');
+        context.routes = context.routes || [];
+        context.routes.push(context.route);
+
+        assert.strictEqual(context.routes.length, 2);
+    });
+
+    await instance.resolve('/test');
+};
+
 const tests = [
     instances.bind(null, logger('instances')),
     opts.bind(null, logger('opts')),
@@ -352,6 +389,8 @@ const tests = [
     successRouteMultipleParallelAsync.bind(null, logger('successRouteMultipleParallelAsync')),
     errorRouteMultipleParallelAsync.bind(null, logger('errorRouteMultipleParallelAsync')),
     params.bind(null, logger('params')),
+    data.bind(null, logger('data')),
+    noPath.bind(null, logger('noPath'))
 ];
 
 async function runTests(log) {
