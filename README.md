@@ -1,6 +1,9 @@
 ### What is BlueJacket?
 BlueJacket is a tiny (~125LOC) router, that provides simple, Express Style routing for both the server and the browser. It uses the popular middleware style of the ExpressJS router with a few tweaks for better readabilty.
 
+##### Important:
+Please note, BlueJacket does not come with an ES5-ready distribution out of the box. It needs to be transpiled for usage on the browser. It is assumed that you will be doing this as part of the build process for your application.
+
 ### Quickstart
 
 To get started install BlueJacket.
