@@ -6,16 +6,16 @@ IsoRouter is a tiny (~125LOC) router, that provides simple, Express Style routin
 To get started install IsoRouter.
 
 ```bash
-yarn add isorouter
+yarn add iso-router
 ```
 ```bash
-npm install --save isorouter
+npm install --save iso-router
 ```
 
 Let's create a route `/gists`, which will fetch a list of public gists from Github and display their titles.
 
 ```javascript
-const IsoRouter = require('../');
+const IsoRouter = require('iso-router');
 const fetch = require('node-fetch');
 
 const router = new IsoRouter();
@@ -52,7 +52,7 @@ Main router class.
 1. Constructor
 
 ```js
-const IsoRouter = require('isorouter');
+const IsoRouter = require('iso-router');
 const router = new IsoRouter(options);
 ```
 
