@@ -98,6 +98,9 @@ class IsoRoute {
     }
 
     async resolve(path, data = {}) {
+        if (!isOfType(path, 'String'))
+            throw 'Path to be resolved must be a string';
+
         let context = Object.assign({}, this.opts.mixins, {
             route: path,
             data
