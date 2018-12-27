@@ -59,7 +59,7 @@ class IsoRoute {
 
         this.opts = Object.assign({}, defaultOpts, opts);
 
-        this._handlersByRegex = {};
+        this._handlerList = [];
 
         if (opts.instanceKey)
             instances[opts.instanceKey] = this;
@@ -84,15 +84,17 @@ class IsoRoute {
         });
         const key = regex.toString();
 
-        this._handlersByRegex[key] = this._handlersByRegex[key] || { regex };
-        this._handlersByRegex[key].handlers = this._handlersByRegex[key].handlers || [];
+        let handlerConfig = {
+            regex,
+            handlers: handlerList.map(handler => {
+                return {
+                    action: handler,
+                    params
+                }
+            })
+        };
 
-        handlerList.forEach(handler => {
-            this._handlersByRegex[key].handlers.push({
-                action: handler,
-                params
-            });
-        });
+        this._handlerList.push(handlerConfig);
     }
 
     async resolve(path, data = {}) {
@@ -102,9 +104,7 @@ class IsoRoute {
         });
 
         try {
-            for (let key in this._handlersByRegex) {
-                const handlerConfig = this._handlersByRegex[key];
-
+            for (let handlerConfig of this._handlerList) {
                 const execResult = handlerConfig.regex.exec(path);
                 if (execResult) {
                     for (let handler of handlerConfig.handlers) {
