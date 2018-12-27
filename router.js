@@ -1,5 +1,5 @@
 /**
- * IsoRoute Entry Point
+ * BlueJacket Entry Point
  */
 
 const pathToRegexp = require('path-to-regexp');
@@ -52,7 +52,7 @@ async function resolveWithHandler(execResult, handler, context = {}, opts = { pa
     }
 };
 
-class IsoRoute {
+class BlueJacket {
     constructor(opts = {}) {
         if (opts.instanceKey && instances[opts.instanceKey])
             return instances[opts.instanceKey];
@@ -124,4 +124,4 @@ class IsoRoute {
     }
 };
 
-module.exports = IsoRoute;
+module.exports = BlueJacket;

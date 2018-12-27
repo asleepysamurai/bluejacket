@@ -7,7 +7,7 @@ const logger = require('bows');
 const express = require('express');
 const fetch = require('node-fetch');
 
-const IsoRoute = require('./');
+const BlueJacket = require('./');
 
 function sleep(ms, success = true) {
     return new Promise((resolve, reject) => {
@@ -16,17 +16,17 @@ function sleep(ms, success = true) {
 };
 
 function instances(log) {
-    const instance1 = new IsoRoute({
+    const instance1 = new BlueJacket({
         instanceKey: 'test1',
         caseSensitive: true
     });
 
-    const instance2 = new IsoRoute({
+    const instance2 = new BlueJacket({
         instanceKey: 'test2',
         caseSensitive: false
     });
 
-    const instance3 = new IsoRoute({
+    const instance3 = new BlueJacket({
         instanceKey: 'test1',
         caseSensitive: false
     });
@@ -45,12 +45,12 @@ function opts(log) {
         instanceKey: 'test'
     };
 
-    const instance = new IsoRoute(opts);
+    const instance = new BlueJacket(opts);
     assert.deepStrictEqual(instance.opts, opts);
 };
 
 async function successRouteSingle(log) {
-    const instance = new IsoRoute();
+    const instance = new BlueJacket();
 
     instance.handle('/test', (context) => {
         log('/test');
@@ -60,7 +60,7 @@ async function successRouteSingle(log) {
 };
 
 async function errorRouteSingle(log) {
-    const instance = new IsoRoute();
+    const instance = new BlueJacket();
     const errMessage = 'randomly thrown error';
 
     instance.handle('/test', (context) => {
@@ -76,7 +76,7 @@ async function errorRouteSingle(log) {
 };
 
 async function successRouteMultipleSeries(log) {
-    const instance = new IsoRoute();
+    const instance = new BlueJacket();
 
     const handlerMessages = ['handler 1', 'handler 2', 'handler 3'];
 
@@ -98,7 +98,7 @@ async function successRouteMultipleSeries(log) {
 };
 
 async function errorRouteMultipleSeries(log) {
-    const instance = new IsoRoute();
+    const instance = new BlueJacket();
 
     const handlerMessages = ['handler 1', 'handler 2', 'handler 3'];
 
@@ -124,7 +124,7 @@ async function errorRouteMultipleSeries(log) {
 };
 
 async function successRouteMultipleParallel(log) {
-    const instance = new IsoRoute();
+    const instance = new BlueJacket();
 
     const handlerMessages = ['handler 1', 'handler 2', 'handler 3'];
 
@@ -146,7 +146,7 @@ async function successRouteMultipleParallel(log) {
 };
 
 async function errorRouteMultipleParallel(log) {
-    const instance = new IsoRoute();
+    const instance = new BlueJacket();
 
     const handlerMessages = ['handler 1', 'handler 2', 'handler 3', 'handler 4'];
 
@@ -175,7 +175,7 @@ async function errorRouteMultipleParallel(log) {
 };
 
 async function skipRouteSeries(log) {
-    const instance = new IsoRoute();
+    const instance = new BlueJacket();
 
     const handlerMessages = ['handler 1', 'handler 2', 'handler 3'];
 
@@ -199,7 +199,7 @@ async function skipRouteSeries(log) {
 };
 
 async function successRouteMultipleSeriesAsync(log) {
-    const instance = new IsoRoute();
+    const instance = new BlueJacket();
 
     const handlerMessages = ['handler 1', 'handler 2', 'handler 3'];
 
@@ -222,7 +222,7 @@ async function successRouteMultipleSeriesAsync(log) {
 };
 
 async function errorRouteMultipleSeriesAsync(log) {
-    const instance = new IsoRoute();
+    const instance = new BlueJacket();
 
     const handlerMessages = ['handler 1', 'handler 2', 'handler 3'];
 
@@ -251,7 +251,7 @@ async function errorRouteMultipleSeriesAsync(log) {
 };
 
 async function successRouteMultipleParallelAsync(log) {
-    const instance = new IsoRoute();
+    const instance = new BlueJacket();
 
     const handlerMessages = ['handler 1', 'handler 2', 'handler 3'];
 
@@ -274,7 +274,7 @@ async function successRouteMultipleParallelAsync(log) {
 };
 
 async function errorRouteMultipleParallelAsync(log) {
-    const instance = new IsoRoute();
+    const instance = new BlueJacket();
 
     const handlerMessages = ['handler 1', 'handler 2', 'handler 3'];
 
@@ -302,7 +302,7 @@ async function errorRouteMultipleParallelAsync(log) {
 };
 
 async function params(log) {
-    const instance = new IsoRoute();
+    const instance = new BlueJacket();
 
     const handlerMessages = ['handler 1', 'handler 2', 'handler 3'];
 
@@ -337,7 +337,7 @@ async function params(log) {
 };
 
 async function data(log) {
-    const instance = new IsoRoute();
+    const instance = new BlueJacket();
     const data = { hasData: true };
 
     instance.handle((context) => {
@@ -352,7 +352,7 @@ async function data(log) {
 };
 
 async function noPath(log) {
-    const instance = new IsoRoute();
+    const instance = new BlueJacket();
 
     instance.handle((context) => {
         log('all routes 1');
@@ -374,7 +374,7 @@ async function noPath(log) {
 };
 
 async function sequence(log) {
-    const instance = new IsoRoute();
+    const instance = new BlueJacket();
 
     instance.handle('/test', (context) => {
         log('/test');
@@ -405,7 +405,7 @@ async function sequence(log) {
 
 async function expressResolve(log) {
     const app = express();
-    const instance = new IsoRoute();
+    const instance = new BlueJacket();
 
     instance.handle('/test', (context) => {
         log('/test');
@@ -449,7 +449,7 @@ async function preserveMixins(log) {
         b: 2
     };
 
-    const instance = new IsoRoute({
+    const instance = new BlueJacket({
         mixins
     });
 

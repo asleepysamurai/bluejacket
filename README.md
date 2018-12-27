@@ -1,24 +1,24 @@
-### What is IsoRouter?
-IsoRouter is a tiny (~125LOC) router, that provides simple, Express Style routing for both the server and the browser. It uses the popular middleware style of the ExpressJS router with a few tweaks for better readabilty.
+### What is BlueJacket?
+BlueJacket is a tiny (~125LOC) router, that provides simple, Express Style routing for both the server and the browser. It uses the popular middleware style of the ExpressJS router with a few tweaks for better readabilty.
 
 ### Quickstart
 
-To get started install IsoRouter.
+To get started install BlueJacket.
 
 ```bash
-yarn add iso-router
+yarn add bluejacket
 ```
 ```bash
-npm install --save iso-router
+npm install --save bluejacket
 ```
 
 Let's create a route `/gists`, which will fetch a list of public gists from Github and display their titles.
 
 ```javascript
-const IsoRouter = require('iso-router');
+const BlueJacket = require('bluejacket');
 const fetch = require('node-fetch');
 
-const router = new IsoRouter();
+const router = new BlueJacket();
 
 // Shared code
 router.handle('/gists', async (context) => {
@@ -46,14 +46,14 @@ app.use(function(req, res, next) {
 
 ### API
 
-##### `IsoRouter`
+##### `BlueJacket`
 Main router class.
 
 1. Constructor
 
 ```js
-const IsoRouter = require('iso-router');
-const router = new IsoRouter(options);
+const BlueJacket = require('bluejacket');
+const router = new BlueJacket(options);
 ```
 
 - `options`: [Optional] Options object with properties:
@@ -67,12 +67,12 @@ const router = new IsoRouter(options);
 
 In /planets.js
 ```js
-const router = new IsoRouter({ caseSensitive: true, instanceKey: 'universe-router' });
+const router = new BlueJacket({ caseSensitive: true, instanceKey: 'universe-router' });
 ```
 
 In /stars.js
 ```js
-const router = new IsoRouter({ instanceKey: 'universe-router' });
+const router = new BlueJacket({ instanceKey: 'universe-router' });
 router.opts.caseSensitive; //true
 ```
 
@@ -140,7 +140,7 @@ router.handle('/planets/named', async (context) => {
 
 This will cause the resolution of the request to terminate.
 
-Note that, when you throw `route`, it will be implicitly caught by IsoRouter. If you throw anything else, IsoRouter will catch and throw it again.
+Note that, when you throw `route`, it will be implicitly caught by BlueJacket. If you throw anything else, BlueJacket will catch and throw it again.
 
 ##### `Context` object
 
