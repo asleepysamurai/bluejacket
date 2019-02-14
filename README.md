@@ -152,6 +152,7 @@ The context object has the following properties:
 - `data`: `data` object that the request resolution is requested with.
 - `params`: If you have any express style route params, these will be listed here in key value form. Regex capture groups will also appear here.
 - `route`: The actual route being resolved.
+- `router`: The router instance resolving this request.
 - Other properties from the `mixins` option defined on this router. If any mixin has the same name as one of the above properties it will be overwritten.
 
 ##### Important:

@@ -103,6 +103,7 @@ class BlueJacket {
 
         let context = Object.assign({}, this.opts.mixins, {
             route: path,
+            router: this,
             data
         });
 
