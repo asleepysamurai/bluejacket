@@ -8,7 +8,7 @@
     "license": "MIT",
     "private": false,
     "scripts": {
-        "prepublishOnly": "rm -rf ./dist/* && ./node_modules/.bin/babel ./router.js --out-dir ./dist --presets=@babel/preset-env"
+        "prepublishOnly": "rm -rf ./dist/* && ./node_modules/.bin/babel ./router.js --out-dir ./dist --presets=@babel/preset-env --plugins=babel-plugin-transform-async-to-promises"
     },
     "dependencies": {
         "@babel/polyfill": "^7.2.5",
@@ -18,6 +18,7 @@
         "@babel/cli": "^7.2.3",
         "@babel/core": "^7.2.2",
         "@babel/preset-env": "^7.3.1",
+        "babel-plugin-transform-async-to-promises": "^0.8.4",
         "bows": "^1.7.0",
         "express": "^4.16.4",
         "node-fetch": "^2.3.0"
