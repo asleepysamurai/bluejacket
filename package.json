@@ -1,6 +1,6 @@
 {
     "name": "bluejacket",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "description": "Simple ExpressJS Style Router for Isomorphic Apps",
     "main": "dist/router.js",
     "repository": "git@github.com:asleepysamurai/bluejacket.git",

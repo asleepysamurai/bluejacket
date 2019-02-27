@@ -98,6 +98,9 @@ class BlueJacket {
     }
 
     async resolve(path, data = {}) {
+        let [route] = path.split('?');
+        [route] = route.split('#');
+
         if (!isOfType(path, 'String'))
             throw 'Path to be resolved must be a string';
 
@@ -109,7 +112,7 @@ class BlueJacket {
 
         try {
             for (let handlerConfig of this._handlerList) {
-                const execResult = handlerConfig.regex.exec(path);
+                const execResult = handlerConfig.regex.exec(route);
                 if (execResult) {
                     for (let handler of handlerConfig.handlers) {
                         await resolveWithHandler(execResult, handler, context);
