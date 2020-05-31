@@ -62,7 +62,6 @@ typings/
 
 *test*
 yarn.lock
-src/
 
 .eslintrc.js
 .prettierrc.js
