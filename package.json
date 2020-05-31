@@ -22,7 +22,6 @@
     "start:inspect-brk": "yarn prep && yarn build:watch:run-brk"
   },
   "dependencies": {
-    "debug": "^4.1.1",
     "path-to-regexp": "^6.1.0"
   },
   "devDependencies": {
@@ -30,9 +29,9 @@
     "@types/express": "^4.17.6",
     "@types/node": "^14.0.1",
     "@types/node-fetch": "^2.5.7",
-    "@types/path-to-regexp": "^1.7.0",
     "@typescript-eslint/eslint-plugin": "^2.33.0",
     "@typescript-eslint/parser": "^2.33.0",
+    "debug": "^4.1.1",
     "eslint": "^6.8.0",
     "eslint-plugin-import": "^2.20.2",
     "express": "^4.16.4",
