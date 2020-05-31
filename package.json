@@ -10,7 +10,7 @@
   "scripts": {
     "prepublishOnly": "yarn prep && yarn build",
     "prep": "rimraf dist && mkdir -p dist",
-    "build": "tsc",
+    "build": "tsc -d --declarationDir ./dist --declarationMap",
     "build:run": "yarn build && yarn run:standard",
     "build:watch:run": "tsc-watch --noClear --onSuccess \"yarn run:inspect\"",
     "build:watch:run-brk": "tsc-watch --noClear --onSuccess \"yarn run:inspect-brk\"",

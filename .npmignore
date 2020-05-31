@@ -60,8 +60,7 @@ typings/
 # next.js build output
 .next
 
-dist/test.js
-dist/test.js.map
+*test*
 yarn.lock
 src/
 
