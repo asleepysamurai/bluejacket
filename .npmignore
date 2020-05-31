@@ -60,6 +60,11 @@ typings/
 # next.js build output
 .next
 
-router.js
-test.js
+dist/test.js
+dist/test.js.map
 yarn.lock
+src/
+
+.eslintrc.js
+.prettierrc.js
+tsconfig.json

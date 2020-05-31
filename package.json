@@ -1,26 +1,52 @@
 {
-    "name": "bluejacket",
-    "version": "0.0.5",
-    "description": "Simple ExpressJS Style Router for Isomorphic Apps",
-    "main": "dist/router.js",
-    "repository": "git@github.com:asleepysamurai/bluejacket.git",
-    "author": "Balaganesh Damodaran <asleepysamurai@gmail.com>",
-    "license": "MIT",
-    "private": false,
-    "scripts": {
-        "prepublishOnly": "rm -rf ./dist/* && ./node_modules/.bin/babel ./router.js --out-dir ./dist --presets=@babel/preset-env --plugins=babel-plugin-transform-async-to-promises"
-    },
-    "dependencies": {
-        "@babel/polyfill": "^7.2.5",
-        "path-to-regexp": "^2.4.0"
-    },
-    "devDependencies": {
-        "@babel/cli": "^7.2.3",
-        "@babel/core": "^7.2.2",
-        "@babel/preset-env": "^7.3.1",
-        "babel-plugin-transform-async-to-promises": "^0.8.4",
-        "bows": "^1.7.0",
-        "express": "^4.16.4",
-        "node-fetch": "^2.3.0"
+  "name": "bluejacket",
+  "version": "0.0.5",
+  "description": "Simple ExpressJS Style Router for Isomorphic Apps",
+  "main": "dist/router.js",
+  "repository": "git@github.com:asleepysamurai/bluejacket.git",
+  "author": "Balaganesh Damodaran <asleepysamurai@gmail.com>",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "prepublishOnly": "yarn prep && yarn build",
+    "prep": "rimraf dist && mkdir -p dist",
+    "build": "tsc",
+    "build:run": "yarn build && yarn run:standard",
+    "build:watch:run": "tsc-watch --noClear --onSuccess \"yarn run:inspect\"",
+    "build:watch:run-brk": "tsc-watch --noClear --onSuccess \"yarn run:inspect-brk\"",
+    "run:standard": "cd dist && env NODE_ENV=development DEBUG=bluejacket:* node ./test.js",
+    "run:inspect": "cd dist && env NODE_ENV=development DEBUG=bluejacket:* node --inspect ./test.js",
+    "run:inspect-brk": "cd dist && env NODE_ENV=development DEBUG=bluejacket:* node --inspect-brk ./test.js",
+    "start": "yarn prep && yarn build:run",
+    "start:inspect": "yarn prep && yarn build:watch:run",
+    "start:inspect-brk": "yarn prep && yarn build:watch:run-brk"
+  },
+  "dependencies": {
+    "debug": "^4.1.1",
+    "path-to-regexp": "^6.1.0"
+  },
+  "devDependencies": {
+    "@types/debug": "^4.1.5",
+    "@types/express": "^4.17.6",
+    "@types/node": "^14.0.1",
+    "@types/node-fetch": "^2.5.7",
+    "@types/path-to-regexp": "^1.7.0",
+    "@typescript-eslint/eslint-plugin": "^2.33.0",
+    "@typescript-eslint/parser": "^2.33.0",
+    "eslint": "^6.8.0",
+    "eslint-plugin-import": "^2.20.2",
+    "express": "^4.16.4",
+    "husky": "^4.2.5",
+    "node-fetch": "^2.3.0",
+    "prettier-eslint-cli": "^5.0.0",
+    "pretty-quick": "^2.0.1",
+    "rimraf": "^3.0.2",
+    "tsc-watch": "^4.2.5",
+    "typescript": "^3.9.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
     }
+  }
 }
