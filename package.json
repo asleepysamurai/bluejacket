@@ -1,8 +1,9 @@
 {
   "name": "bluejacket",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Simple ExpressJS Style Router for Isomorphic Apps",
   "main": "dist/router.js",
+  "types": "dist/router.d.ts",
   "repository": "git@github.com:asleepysamurai/bluejacket.git",
   "author": "Balaganesh Damodaran <asleepysamurai@gmail.com>",
   "license": "MIT",
