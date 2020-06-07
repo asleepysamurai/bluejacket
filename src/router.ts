@@ -160,7 +160,7 @@ export class BlueJacket<MixinInterface> {
     let [route] = path.split('?');
     [route] = route.split('#');
 
-    let context: Context<MixinInterface> = Object.assign({}, this.mixins, {
+    let context: Context<MixinInterface> = Object.assign(Object.create(this.mixins || {}), {
       route: path,
       router: this,
       data,
