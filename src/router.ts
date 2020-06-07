@@ -6,32 +6,34 @@ import { pathToRegexp, Key } from 'path-to-regexp';
 
 export type ObjectWithDynamicKeys = { [key: string]: any };
 
-export type Context = {
+export type Context<MixinInterface> = {
   route: string;
-  router: BlueJacket;
+  router: BlueJacket<MixinInterface>;
   data: ObjectWithDynamicKeys;
-  [key: string]: any;
-};
+  params?: ObjectWithDynamicKeys;
+} & MixinInterface;
 
-export type HandlerFunction = (context: Context) => any;
-export type HandlerAction = HandlerFunction | HandlerFunction[];
+export type HandlerFunction<MixinInterface> = (context: Context<MixinInterface>) => any;
+export type HandlerAction<MixinInterface> =
+  | HandlerFunction<MixinInterface>
+  | HandlerFunction<MixinInterface>[];
 
-export type Handler = {
-  action: HandlerAction;
+export type Handler<MixinInterface> = {
+  action: HandlerAction<MixinInterface>;
   params: Key[];
 };
 
-interface IBlueJacket {
-  mixins?: ObjectWithDynamicKeys;
+interface IBlueJacket<MixinInterface = {}> {
+  mixins?: MixinInterface;
   strict?: boolean;
   caseSensitive?: boolean;
   instanceKey?: string;
 }
 
-export interface BlueJacket extends IBlueJacket {}
+export interface BlueJacket<MixinInterface> extends IBlueJacket<MixinInterface> {}
 
-export class BlueJacket {
-  static instances = new Map<string, BlueJacket>();
+export class BlueJacket<MixinInterface> {
+  static instances = new Map<string, BlueJacket<any>>();
 
   private static readonly defaultOpts: IBlueJacket = {
     mixins: {},
@@ -41,12 +43,12 @@ export class BlueJacket {
 
   private handlerList: {
     regex: RegExp;
-    handlers: Handler[];
+    handlers: Handler<MixinInterface>[];
   }[] = [];
 
   constructor(opts: IBlueJacket = BlueJacket.defaultOpts) {
     if (opts.instanceKey && BlueJacket.instances.has(opts.instanceKey)) {
-      return BlueJacket.instances.get(opts.instanceKey) as BlueJacket;
+      return BlueJacket.instances.get(opts.instanceKey) as BlueJacket<MixinInterface>;
     }
 
     Object.assign(this, BlueJacket.defaultOpts, opts);
@@ -62,13 +64,13 @@ export class BlueJacket {
     return Object.prototype.toString.call(item) === `[object ${type}]`;
   }
 
-  private recursivelyTypeCheckHandlers(handlerList: HandlerAction[]) {
+  private recursivelyTypeCheckHandlers(handlerList: HandlerAction<MixinInterface>[]) {
     handlerList.forEach((handler) => {
       if (this.isOfType(handler, 'Function') || this.isOfType(handler, 'AsyncFunction')) {
         return;
       }
       if (this.isOfType(handler, 'Array')) {
-        return this.recursivelyTypeCheckHandlers(handler as HandlerAction[]);
+        return this.recursivelyTypeCheckHandlers(handler as HandlerAction<MixinInterface>[]);
       }
 
       throw new Error(`${handler} is not a function or an array of functions.`);
@@ -76,9 +78,12 @@ export class BlueJacket {
   }
 
   handle(path: string | RegExp): void;
-  handle(path: string | RegExp, ...handlerList: HandlerAction[]): void;
-  handle(...handlerList: HandlerAction[]): void;
-  handle(path: string | RegExp | HandlerAction, ...handlerList: HandlerAction[]): void {
+  handle(path: string | RegExp, ...handlerList: HandlerAction<MixinInterface>[]): void;
+  handle(...handlerList: HandlerAction<MixinInterface>[]): void;
+  handle(
+    path: string | RegExp | HandlerAction<MixinInterface>,
+    ...handlerList: HandlerAction<MixinInterface>[]
+  ): void {
     // If path is neither string nor regex, assume it's a handler
     // And set path to regex matching all
     let registerablePath: string | RegExp;
@@ -88,7 +93,7 @@ export class BlueJacket {
     } else if (this.isOfType(path, 'RegExp')) {
       registerablePath = path as RegExp;
     } else {
-      handlerList.unshift(path as HandlerAction);
+      handlerList.unshift(path as HandlerAction<MixinInterface>);
       registerablePath = /.*/;
     }
 
@@ -123,8 +128,8 @@ export class BlueJacket {
 
   private async resolveWithHandler(
     execResult: RegExpExecArray,
-    handler: Handler,
-    context: Context,
+    handler: Handler<MixinInterface>,
+    context: Context<MixinInterface>,
     { params }: { params?: ObjectWithDynamicKeys } = {},
   ): Promise<void> {
     context.params = params || this.buildParams(execResult, handler.params);
@@ -133,10 +138,10 @@ export class BlueJacket {
       this.isOfType(handler.action, 'Function') ||
       this.isOfType(handler.action, 'AsyncFunction')
     ) {
-      await Promise.resolve((handler.action as HandlerFunction)(context));
+      await Promise.resolve((handler.action as HandlerFunction<MixinInterface>)(context));
     } else if (this.isOfType(handler.action, 'Array')) {
       await Promise.all(
-        (handler.action as HandlerFunction[]).map((action) => {
+        (handler.action as HandlerFunction<MixinInterface>[]).map((action) => {
           return this.resolveWithHandler(execResult, { action, params: [] }, context, {
             params: context.params,
           });
@@ -147,7 +152,7 @@ export class BlueJacket {
     }
   }
 
-  async resolve(path: string, data: { [key: string]: any } = {}): Promise<Context> {
+  async resolve(path: string, data: { [key: string]: any } = {}): Promise<Context<MixinInterface>> {
     if (!this.isOfType(path, 'String')) {
       throw 'Path to be resolved must be a string';
     }
@@ -155,7 +160,7 @@ export class BlueJacket {
     let [route] = path.split('?');
     [route] = route.split('#');
 
-    let context: Context = Object.assign({}, this.mixins, {
+    let context: Context<MixinInterface> = Object.assign({}, this.mixins, {
       route: path,
       router: this,
       data,

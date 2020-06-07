@@ -7,7 +7,7 @@ import Debug from 'debug';
 import express from 'express';
 import fetch from 'node-fetch';
 
-import { BlueJacket, ObjectWithDynamicKeys, Context } from './router';
+import { BlueJacket, ObjectWithDynamicKeys } from './router';
 
 function sleep(ms: number, success: boolean = true) {
   return new Promise((resolve, reject) => {
@@ -45,7 +45,7 @@ function opts() {
     instanceKey: 'test',
   };
 
-  const instance = new BlueJacket(opts);
+  const instance = new BlueJacket<{ test: () => void }>(opts);
 
   let instanceOpts: ObjectWithDynamicKeys = {};
   type optKeys = 'mixins' | 'strict' | 'caseSensitive' | 'instanceKey';
@@ -82,22 +82,22 @@ async function errorRouteSingle(log: Debug.Debugger) {
 }
 
 async function successRouteMultipleSeries(log: Debug.Debugger) {
-  const instance = new BlueJacket();
+  const instance = new BlueJacket<{ executedHandlers: string[] }>();
 
   const handlerMessages = ['handler 1', 'handler 2', 'handler 3'];
 
-  instance.handle('/test', (context: Context) => {
+  instance.handle('/test', (context) => {
     log(handlerMessages[0]);
     context.executedHandlers = [handlerMessages[0]];
   });
 
   instance.handle(
     '/test',
-    (context: Context) => {
+    (context) => {
       log(handlerMessages[1]);
       context.executedHandlers.push(handlerMessages[1]);
     },
-    (context: Context) => {
+    (context) => {
       log(handlerMessages[2]);
       context.executedHandlers.push(handlerMessages[2]);
     },
@@ -108,23 +108,23 @@ async function successRouteMultipleSeries(log: Debug.Debugger) {
 }
 
 async function errorRouteMultipleSeries(log: Debug.Debugger) {
-  const instance = new BlueJacket();
+  const instance = new BlueJacket<{ executedHandlers: string[] }>();
 
   const handlerMessages = ['handler 1', 'handler 2', 'handler 3'];
 
-  instance.handle('/test', (context: Context) => {
+  instance.handle('/test', (context) => {
     log(handlerMessages[0]);
     context.executedHandlers = [handlerMessages[0]];
   });
 
   instance.handle(
     '/test',
-    (context: Context) => {
+    (context) => {
       log(handlerMessages[1]);
       context.executedHandlers.push(handlerMessages[1]);
       throw context.executedHandlers;
     },
-    (context: Context) => {
+    (context) => {
       log(handlerMessages[2]);
       context.executedHandlers.push(handlerMessages[2]);
     },
@@ -138,22 +138,22 @@ async function errorRouteMultipleSeries(log: Debug.Debugger) {
 }
 
 async function successRouteMultipleParallel(log: Debug.Debugger) {
-  const instance = new BlueJacket();
+  const instance = new BlueJacket<{ executedHandlers: string[] }>();
 
   const handlerMessages = ['handler 1', 'handler 2', 'handler 3'];
 
   instance.handle(
     '/test',
     [
-      (context: Context) => {
+      (context) => {
         log(handlerMessages[0]);
         context.executedHandlers = [handlerMessages[0]];
       },
-      (context: Context) => {
+      (context) => {
         log(handlerMessages[1]);
         context.executedHandlers.push(handlerMessages[1]);
       },
-      (context: Context) => {
+      (context) => {
         log(handlerMessages[2]);
         context.executedHandlers.push(handlerMessages[2]);
       },
@@ -168,28 +168,28 @@ async function successRouteMultipleParallel(log: Debug.Debugger) {
 }
 
 async function errorRouteMultipleParallel(log: Debug.Debugger) {
-  const instance = new BlueJacket();
+  const instance = new BlueJacket<{ executedHandlers: string[] }>();
 
   const handlerMessages = ['handler 1', 'handler 2', 'handler 3', 'handler 4'];
 
   instance.handle(
     '/test',
     [
-      (context: Context) => {
+      (context) => {
         log(handlerMessages[0]);
         context.executedHandlers = [handlerMessages[0]];
       },
-      (context: Context) => {
+      (context) => {
         log(handlerMessages[1]);
         context.executedHandlers.push(handlerMessages[1]);
         throw context.executedHandlers;
       },
-      (context: Context) => {
+      (context) => {
         log(handlerMessages[2]);
         context.executedHandlers.push(handlerMessages[2]);
       },
     ],
-    (context: Context) => {
+    (context) => {
       log('series ' + handlerMessages[3]);
       context.executedHandlers.push(handlerMessages[3]);
     },
@@ -208,23 +208,23 @@ async function errorRouteMultipleParallel(log: Debug.Debugger) {
 }
 
 async function skipRouteSeries(log: Debug.Debugger) {
-  const instance = new BlueJacket();
+  const instance = new BlueJacket<{ executedHandlers: string[] }>();
 
   const handlerMessages = ['handler 1', 'handler 2', 'handler 3'];
 
-  instance.handle('/test', (context: Context) => {
+  instance.handle('/test', (context) => {
     log(handlerMessages[0]);
     context.executedHandlers = [handlerMessages[0]];
   });
 
   instance.handle(
     '/test',
-    (context: Context) => {
+    (context) => {
       log(handlerMessages[1]);
       context.executedHandlers.push(handlerMessages[1]);
       throw 'route';
     },
-    (context: Context) => {
+    (context) => {
       log(handlerMessages[2]);
       context.executedHandlers.push(handlerMessages[2]);
 
@@ -236,23 +236,23 @@ async function skipRouteSeries(log: Debug.Debugger) {
 }
 
 async function successRouteMultipleSeriesAsync(log: Debug.Debugger) {
-  const instance = new BlueJacket();
+  const instance = new BlueJacket<{ executedHandlers: string[] }>();
 
   const handlerMessages = ['handler 1', 'handler 2', 'handler 3'];
 
-  instance.handle('/test', async (context: Context) => {
+  instance.handle('/test', async (context) => {
     log(handlerMessages[0]);
     context.executedHandlers = [handlerMessages[0]];
   });
 
   instance.handle(
     '/test',
-    async (context: Context) => {
+    async (context) => {
       log(handlerMessages[1]);
       await sleep(10);
       context.executedHandlers.push(handlerMessages[1]);
     },
-    (context: Context) => {
+    (context) => {
       log(handlerMessages[2]);
       context.executedHandlers.push(handlerMessages[2]);
     },
@@ -263,11 +263,11 @@ async function successRouteMultipleSeriesAsync(log: Debug.Debugger) {
 }
 
 async function errorRouteMultipleSeriesAsync(log: Debug.Debugger) {
-  const instance = new BlueJacket();
+  const instance = new BlueJacket<{ executedHandlers: string[] }>();
 
   const handlerMessages = ['handler 1', 'handler 2', 'handler 3'];
 
-  instance.handle('/test', async (context: Context) => {
+  instance.handle('/test', async (context) => {
     log(handlerMessages[0]);
     await sleep(10);
     context.executedHandlers = [handlerMessages[0]];
@@ -275,12 +275,12 @@ async function errorRouteMultipleSeriesAsync(log: Debug.Debugger) {
 
   instance.handle(
     '/test',
-    (context: Context) => {
+    (context) => {
       log(handlerMessages[1]);
       context.executedHandlers.push(handlerMessages[1]);
       throw context.executedHandlers;
     },
-    (context: Context) => {
+    (context) => {
       log(handlerMessages[2]);
       context.executedHandlers.push(handlerMessages[2]);
     },
@@ -296,22 +296,22 @@ async function errorRouteMultipleSeriesAsync(log: Debug.Debugger) {
 }
 
 async function successRouteMultipleParallelAsync(log: Debug.Debugger) {
-  const instance = new BlueJacket();
+  const instance = new BlueJacket<{ executedHandlers: string[] }>();
 
   const handlerMessages = ['handler 1', 'handler 2', 'handler 3'];
 
-  instance.handle('/test', async (context: Context) => {
+  instance.handle('/test', async (context) => {
     log(handlerMessages[0]);
     context.executedHandlers = [handlerMessages[0]];
   });
 
   instance.handle('/test', [
-    async (context: Context) => {
+    async (context) => {
       log(handlerMessages[2]);
       await sleep(10);
       context.executedHandlers.push(handlerMessages[2]);
     },
-    (context: Context) => {
+    (context) => {
       log(handlerMessages[1]);
       context.executedHandlers.push(handlerMessages[1]);
     },
@@ -322,26 +322,26 @@ async function successRouteMultipleParallelAsync(log: Debug.Debugger) {
 }
 
 async function errorRouteMultipleParallelAsync(log: Debug.Debugger) {
-  const instance = new BlueJacket();
+  const instance = new BlueJacket<{ executedHandlers: string[] }>();
 
   const handlerMessages = ['handler 1', 'handler 2', 'handler 3'];
 
   instance.handle(
     '/test',
     [
-      async (context: Context) => {
+      async (context) => {
         log(handlerMessages[1]);
         context.executedHandlers = [];
         await sleep(10);
         context.executedHandlers.push(handlerMessages[1]);
         throw context.executedHandlers;
       },
-      (context: Context) => {
+      (context) => {
         log(handlerMessages[0]);
         context.executedHandlers.push(handlerMessages[0]);
       },
     ],
-    (context: Context) => {
+    (context) => {
       log(handlerMessages[2]);
       context.executedHandlers.push(handlerMessages[2]);
     },
@@ -366,11 +366,11 @@ async function params(log: Debug.Debugger) {
     () => {
       log(handlerMessages[0]);
     },
-    (context: Context) => {
+    (context) => {
       log(handlerMessages[1]);
       assert.deepStrictEqual(
         context.params,
-        context.params.p1 == 'p1'
+        context.params?.p1 == 'p1'
           ? {
               p1: 'p1',
               '0': 'p2',
@@ -388,11 +388,11 @@ async function params(log: Debug.Debugger) {
     () => {
       log(handlerMessages[0]);
     },
-    (context: Context) => {
+    (context) => {
       log(handlerMessages[1]);
       assert.deepStrictEqual(
         context.params,
-        context.params.test == 'p1'
+        context.params?.test == 'p1'
           ? {
               test: 'p1',
               '0': 'p2',
@@ -410,10 +410,10 @@ async function params(log: Debug.Debugger) {
 }
 
 async function data(log: Debug.Debugger) {
-  const instance = new BlueJacket();
+  const instance = new BlueJacket<{ routes: string[] }>();
   const data = { hasData: true };
 
-  instance.handle((context: Context) => {
+  instance.handle((context) => {
     log('data');
     context.routes = context.routes || [];
     context.routes.push(context.route);
@@ -425,9 +425,9 @@ async function data(log: Debug.Debugger) {
 }
 
 async function noPath(log: Debug.Debugger) {
-  const instance = new BlueJacket();
+  const instance = new BlueJacket<{ routes: string[] }>();
 
-  instance.handle((context: Context) => {
+  instance.handle((context) => {
     log('all routes 1');
     context.routes = context.routes || [];
     context.routes.push(context.route);
@@ -435,7 +435,7 @@ async function noPath(log: Debug.Debugger) {
     assert.strictEqual(context.routes.length, 1);
   });
 
-  instance.handle((context: Context) => {
+  instance.handle((context) => {
     log('all routes 2');
     context.routes = context.routes || [];
     context.routes.push(context.route);
@@ -447,9 +447,9 @@ async function noPath(log: Debug.Debugger) {
 }
 
 async function sequence(log: Debug.Debugger) {
-  const instance = new BlueJacket();
+  const instance = new BlueJacket<{ routes: string[] }>();
 
-  instance.handle('/test', (context: Context) => {
+  instance.handle('/test', (context) => {
     log('/test');
     context.routes = context.routes || [];
     context.routes.push(context.route);
@@ -457,7 +457,7 @@ async function sequence(log: Debug.Debugger) {
     assert.strictEqual(context.routes[0], context.route);
   });
 
-  instance.handle((context: Context) => {
+  instance.handle((context) => {
     log('none');
     context.routes = context.routes || [];
     context.routes.push(context.route);
@@ -465,7 +465,7 @@ async function sequence(log: Debug.Debugger) {
     assert.strictEqual(context.routes[1], context.route);
   });
 
-  instance.handle('/test', (context: Context) => {
+  instance.handle('/test', (context) => {
     log('/test');
     context.routes = context.routes || [];
     context.routes.push(context.route);
@@ -478,9 +478,9 @@ async function sequence(log: Debug.Debugger) {
 
 async function expressResolve(log: Debug.Debugger) {
   const app = express();
-  const instance = new BlueJacket();
+  const instance = new BlueJacket<{ routes: string[] }>();
 
-  instance.handle('/test', (context: Context) => {
+  instance.handle('/test', (context) => {
     log('/test');
     context.routes = context.routes || [];
     context.routes.push(context.route);
@@ -488,7 +488,7 @@ async function expressResolve(log: Debug.Debugger) {
     assert.strictEqual(context.routes[0], context.route);
   });
 
-  instance.handle((context: Context) => {
+  instance.handle((context) => {
     log('none');
     context.routes = context.routes || [];
     context.routes.push(context.route);
@@ -496,7 +496,7 @@ async function expressResolve(log: Debug.Debugger) {
     assert.strictEqual(context.routes[1], context.route);
   });
 
-  instance.handle('/test', (context: Context) => {
+  instance.handle('/test', (context) => {
     log('/test');
     context.routes = context.routes || [];
     context.routes.push(context.route);
@@ -522,11 +522,11 @@ async function preserveMixins(log: Debug.Debugger) {
     b: 2,
   };
 
-  const instance = new BlueJacket({
+  const instance = new BlueJacket<ObjectWithDynamicKeys>({
     mixins,
   });
 
-  instance.handle('/test', (context: Context) => {
+  instance.handle('/test', (context) => {
     log('/test');
 
     Object.keys(mixins).forEach((key) => {
