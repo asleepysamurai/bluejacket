@@ -1,6 +1,6 @@
 {
   "name": "bluejacket",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Simple ExpressJS Style Router for Isomorphic Apps",
   "main": "dist/router.js",
   "types": "dist/router.d.ts",

@@ -4,16 +4,18 @@ BlueJacket is a tiny (~125LOC) router, that provides simple, Express Style routi
 
 ##### Important:
 
-As of v0.0.6 BlueJacket comes with Typescript support. Usage Example:
+As of v0.0.6 BlueJacket comes with Typescript support.
+As of v0.0.10 Tyepscript support has been upgraded to provide mixin type definitions within handler context
+Usage Example:
 
 ```typescript
-import { BlueJacket, Context } from 'bluejacket';
+import { BlueJacket } from 'bluejacket';
 import fetch from 'node-fetch';
 
-const router = new BlueJacket();
+const router = new BlueJacket<{ html: string }>();
 
 // Shared code
-router.handle('/gists', async (context: Context) => {
+router.handle('/gists', async (context) => {
   const gists = await (await fetch('https://api.github.com/gists')).json();
 
   context.html = `<ul>
@@ -29,13 +31,13 @@ router.handle('/gists', async (context: Context) => {
 });
 
 // Browser Code
-const context: Context = router.resolve('/gists');
+const context = router.resolve('/gists');
 document.documentElement.innerHTML = context.html || ''; // Don't actually do this. innerHTML is BAD.
 
 // Server Code
 // app is an expressJS app
 app.use(function(req, res, next) {
-  const context: Context = router.resolve(req.originalUrl);
+  const context = router.resolve(req.originalUrl);
   res.send(context.html);
 });
 ```
